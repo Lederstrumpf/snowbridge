@@ -47,6 +47,28 @@ contract MMRProofTest is Test {
         }
     }
 
+    function testVerifyLeafLargeProof() public {
+        Fixture memory fix = fixture();
+        bytes32 accHash;
+        uint256 proofItems;
+
+        for (uint256 i = 0; i < fix.leaves.length; i++) {
+            console.log("index: %d", i);
+            (proofItems, accHash) = wrapper.calculateLeafProof(fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order);
+            if (fix.rootHash != accHash) {
+                console.log("accHash:");
+                console.logBytes32(accHash);
+                console.log("rootHash:");
+                console.logBytes32(fix.rootHash);
+                // fail test
+                assertTrue(false);
+            } else {
+                console.log("proof items: %d", proofItems);
+                assertTrue(true);
+            }
+        }
+    }
+
     function testVerifyLeafProofFailsExceededProofSize() public {
         Fixture memory fix = fixture();
 
@@ -77,7 +99,7 @@ contract MMRLargeProofTest is Test {
         wrapper = new MMRProofWrapper();
 
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/test/data/mmr-fixture-data-n-leaves.json");
+        string memory path = string.concat(root, "/test/data/mmr-fixture-data-22-proof-items.json");
         //string memory json = vm.readFile(path);
         fixtureData = vm.readFile(path).parseRaw("");
     }
@@ -89,10 +111,12 @@ contract MMRLargeProofTest is Test {
     function testVerifyLeafLargeProof() public {
         Fixture memory fix = fixture();
         bytes32 accHash;
+        uint256 proofItems;
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
-            accHash = wrapper.calculateLeafProof(fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order);
-            if (fix.rootHash != accHash) {
+            console.log("index: %d", i);
+            (proofItems, accHash) = wrapper.calculateLeafProof(fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order);
+            if (fix.rootHash == accHash) {
                 console.log("accHash:");
                 console.logBytes32(accHash);
                 console.log("rootHash:");
@@ -100,6 +124,7 @@ contract MMRLargeProofTest is Test {
                 // fail test
                 assertTrue(false);
             } else {
+                console.log("proof items: %d", proofItems);
                 assertTrue(true);
             }
         }

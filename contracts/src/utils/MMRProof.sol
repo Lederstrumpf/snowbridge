@@ -43,7 +43,7 @@ library MMRProof {
     function calculateLeafProof(bytes32 leafHash, bytes32[] calldata proof, uint256 proofOrder)
         internal
         pure
-        returns (bytes32)
+        returns (uint256, bytes32)
     {
         // Size of the proof is bounded, since `proofOrder` can only contain `MAXIMUM_PROOF_SIZE` orderings.
         if (proof.length > MAXIMUM_PROOF_SIZE) {
@@ -51,13 +51,14 @@ library MMRProof {
         }
 
         bytes32 acc = leafHash;
-        for (uint256 i = 0; i < proof.length;) {
+        uint256 i = 0;
+        for (i; i < proof.length;) {
             acc = hashPairs(acc, proof[i], (proofOrder >> i) & 1);
             unchecked {
                 i++;
             }
         }
-        return acc;
+        return (i, acc);
     }
 
     function hashPairs(bytes32 x, bytes32 y, uint256 order) internal pure returns (bytes32 value) {

@@ -15,7 +15,7 @@ contract MMRProofWrapper {
     function calculateLeafProof(bytes32 leafHash, bytes32[] calldata proof, uint256 proofOrder)
         external
         pure
-        returns (bytes32)
+        returns (uint256, bytes32)
     {
         return MMRProof.calculateLeafProof(leafHash, proof, proofOrder);
     }
