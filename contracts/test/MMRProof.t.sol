@@ -88,9 +88,15 @@ contract MMRLargeProofTest is Test {
 
     function testVerifyLeafLargeProof() public {
         Fixture memory fix = fixture();
+        bytes32 accHash;
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
-            assertTrue(wrapper.verifyLeafProof(fix.rootHash, fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order));
+            accHash = wrapper.calculateLeafProof(fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order);
+            console.log("accHash:");
+            console.logBytes32(accHash);
+            console.log("rootHash:");
+            console.logBytes32(fix.rootHash);
+            assertTrue(fix.rootHash == accHash);
         }
     }
 

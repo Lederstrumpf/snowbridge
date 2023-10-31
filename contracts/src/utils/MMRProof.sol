@@ -34,6 +34,32 @@ library MMRProof {
         return root == acc;
     }
 
+    /**
+     * @dev calculate the root from a proof
+     * @param leafHash leaf hash
+     * @param proof an array of hashes
+     * @param proofOrder a bitfield describing the order of each item (left vs right)
+     */
+    function calculateLeafProof(bytes32 leafHash, bytes32[] calldata proof, uint256 proofOrder)
+        internal
+        pure
+        returns (bytes32)
+    {
+        // Size of the proof is bounded, since `proofOrder` can only contain `MAXIMUM_PROOF_SIZE` orderings.
+        if (proof.length > MAXIMUM_PROOF_SIZE) {
+            revert ProofSizeExceeded();
+        }
+
+        bytes32 acc = leafHash;
+        for (uint256 i = 0; i < proof.length;) {
+            acc = hashPairs(acc, proof[i], (proofOrder >> i) & 1);
+            unchecked {
+                i++;
+            }
+        }
+        return acc;
+    }
+
     function hashPairs(bytes32 x, bytes32 y, uint256 order) internal pure returns (bytes32 value) {
         assembly {
             switch order
