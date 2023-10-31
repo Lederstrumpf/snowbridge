@@ -77,7 +77,7 @@ contract MMRLargeProofTest is Test {
         wrapper = new MMRProofWrapper();
 
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/test/data/mmr-fixture-data-15-leaves.json");
+        string memory path = string.concat(root, "/test/data/mmr-fixture-data-n-leaves.json");
         //string memory json = vm.readFile(path);
         fixtureData = vm.readFile(path).parseRaw("");
     }
