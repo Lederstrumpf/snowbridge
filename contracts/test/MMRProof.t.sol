@@ -92,11 +92,16 @@ contract MMRLargeProofTest is Test {
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
             accHash = wrapper.calculateLeafProof(fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order);
-            console.log("accHash:");
-            console.logBytes32(accHash);
-            console.log("rootHash:");
-            console.logBytes32(fix.rootHash);
-            assertTrue(fix.rootHash == accHash);
+            if (fix.rootHash != accHash) {
+                console.log("accHash:");
+                console.logBytes32(accHash);
+                console.log("rootHash:");
+                console.logBytes32(fix.rootHash);
+                // fail test
+                assertTrue(false);
+            } else {
+                assertTrue(true);
+            }
         }
     }
 
