@@ -23,6 +23,8 @@ contract MMRProofTest is Test {
     }
 
     bytes public fixtureData;
+    bytes public fixtureData22ProofItems;
+    bytes public fixtureData34ProofItems;
 
     MMRProofWrapper public wrapper;
 
@@ -30,13 +32,25 @@ contract MMRProofTest is Test {
         wrapper = new MMRProofWrapper();
 
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/test/data/mmr-fixture-data-15-leaves.json");
+        string memory path_4_proof_items = string.concat(root, "/test/data/mmr-fixture-data-15-leaves.json");
+        string memory path_22_proof_items = string.concat(root, "/test/data/mmr-fixture-data-22-proof-items.json");
+        string memory path_34_proof_items = string.concat(root, "/test/data/mmr-fixture-data-34-proof-items.json");
         //string memory json = vm.readFile(path);
-        fixtureData = vm.readFile(path).parseRaw("");
+        fixtureData = vm.readFile(path_4_proof_items).parseRaw("");
+        fixtureData22ProofItems = vm.readFile(path_22_proof_items).parseRaw("");
+        fixtureData34ProofItems = vm.readFile(path_34_proof_items).parseRaw("");
     }
 
     function fixture() public view returns (Fixture memory) {
         return abi.decode(fixtureData, (Fixture));
+    }
+
+    function fixture22ProofItems() public view returns (Fixture memory) {
+        return abi.decode(fixtureData22ProofItems, (Fixture));
+    }
+
+    function fixture34ProofItems() public view returns (Fixture memory) {
+        return abi.decode(fixtureData34ProofItems, (Fixture));
     }
 
     function testVerifyLeafProof() public {
@@ -44,6 +58,22 @@ contract MMRProofTest is Test {
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
             assertTrue(wrapper.verifyLeafProof(fix.rootHash, fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order));
+        }
+    }
+
+    function testVerifyLeafProof22ProofItems() public {
+        Fixture memory fix = fixture22ProofItems();
+
+        for (uint256 i = 0; i < fix.leaves.length; i++) {
+            assertFalse(wrapper.verifyLeafProof(fix.rootHash, fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order));
+        }
+    }
+
+    function testVerifyLeafProof34ProofItems() public {
+        Fixture memory fix = fixture34ProofItems();
+
+        for (uint256 i = 0; i < fix.leaves.length; i++) {
+            assertFalse(wrapper.verifyLeafProof(fix.rootHash, fix.leaves[i], fix.proofs[i].items, fix.proofs[i].order));
         }
     }
 
