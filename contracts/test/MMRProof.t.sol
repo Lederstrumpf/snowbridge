@@ -53,7 +53,7 @@ contract MMRProofTest is Test {
         return abi.decode(fixtureData34ProofItems, (Fixture));
     }
 
-    function testVerifyLeafProof() public {
+    function testVerifyLeafProof15LeavesAnd4ProofItems() public {
         Fixture memory fix = fixture();
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
@@ -61,7 +61,7 @@ contract MMRProofTest is Test {
         }
     }
 
-    function testVerifyLeafProof22ProofItems() public {
+    function testVerifyLeafProof15LeavesAnd22ProofItems() public {
         Fixture memory fix = fixture22ProofItems();
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
@@ -69,7 +69,7 @@ contract MMRProofTest is Test {
         }
     }
 
-    function testVerifyLeafProof34ProofItems() public {
+    function testVerifyLeafProof15LeavesAnd34ProofItems() public {
         Fixture memory fix = fixture34ProofItems();
 
         for (uint256 i = 0; i < fix.leaves.length; i++) {
