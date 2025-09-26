@@ -21,6 +21,7 @@ import (
 func (li *BeefyListener) getKeyOwnershipProof(meta *types.Metadata, latestHash types.Hash, latestBlockNumber uint64, offenderPubKeyCompressed []byte, validatorSetID uint64) ([]byte, error) {
 	var keyOwnershipProofRaw string
 	callName := "BeefyApi_generate_key_ownership_proof"
+	// TODO NOW
 	// TODO: not used in `BeefyApi_generate_key_ownership_proof`, but nonetheless should get session number that validator set was last active for with `beefy_set_id_session`
 	sessionDummy, err := types.EncodeToBytes(uint64(0))
 	if err != nil {
@@ -75,6 +76,7 @@ func (li *BeefyListener) getKeyOwnershipProof(meta *types.Metadata, latestHash t
 	epochDuration := binary.LittleEndian.Uint64(epochDurationRaw)
 	log.Debug("epochDuration: ", epochDuration)
 
+	// TODO NOW? isn't it already handled by future block equivocation block
 	// TODO: handle if offender claims to be in nextSession. Also, check whether slot skips are an issue.
 	blockInOffenderSession := latestBlockNumber - epochDuration*uint64(currentSession-offenderSession)
 
@@ -238,6 +240,7 @@ func (li *BeefyListener) signedExtrinsicFromCall(meta *types.Metadata, call type
 		return ext, fmt.Errorf("get latest block info: %w", err)
 	}
 
+	// TODO NOW
 	// TODO: check if applicable here
 	era := parachain.NewMortalEra(uint64(latestBlock.Block.Header.Number))
 

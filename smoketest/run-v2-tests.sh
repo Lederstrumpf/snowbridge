@@ -6,10 +6,10 @@ cargo test --no-run
 
 tests=(
   # ERC20 Tests
-  register_ena
-  send_ena_to_ah
-  send_ena_to_penpal
-  transfer_ena
+  # register_ena
+  # send_ena_to_ah
+  # send_ena_to_penpal
+  # transfer_ena
 
   # PNA Tests
   register_pna

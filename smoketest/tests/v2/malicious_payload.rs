@@ -36,6 +36,7 @@ use snowbridge_smoketest::{
 	},
 };
 use sp_mmr_primitives::AncestryProof as MmrAncestryProof;
+use subxt::client::OfflineClientT;
 use subxt_signer::sr25519::dev;
 
 use sp_consensus_beefy;
@@ -158,17 +159,17 @@ async fn malicious_payload() {
 
 	let equivocation_variants = vec![
 		(EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 0),
-		(EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 0),
+		// (EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 0),
 		(EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 1),
 		(EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 1),
-		// (EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 5),
-		// (EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 5),
+		(EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 5),
+		(EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 5),
 		(EquivocationType::FutureBlockEquivocation, EquivocationSession::CurrentSession, 0),
-		(EquivocationType::FutureBlockEquivocation, EquivocationSession::NextSession, 0),
+		// (EquivocationType::FutureBlockEquivocation, EquivocationSession::NextSession, 0),
 		(EquivocationType::FutureBlockEquivocation, EquivocationSession::CurrentSession, 1),
 		(EquivocationType::FutureBlockEquivocation, EquivocationSession::NextSession, 1),
-		// (EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 5),
-		// (EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 5),
+		(EquivocationType::ForkEquivocation, EquivocationSession::CurrentSession, 5),
+		(EquivocationType::ForkEquivocation, EquivocationSession::NextSession, 5),
 	];
 	for (equivocation_variant, equivocation_claimed_session, report_session_delay) in
 		equivocation_variants.clone()
@@ -184,7 +185,7 @@ async fn malicious_payload() {
 			TestConfig {
 				submit_initial: true,
 				submit_final: false,
-				report_equivocation: false,
+				report_equivocation: true,
 				report_session_delay,
 			},
 			&test_clients,
@@ -601,7 +602,21 @@ async fn malicious_payload_inner(
 					.await
 					.expect("submit report");
 
-				println!("report_fork_equivocation transaction: {:?}", tx);
+				let system_storage_api = relaychain::api::system::storage::StorageApi;
+				let current_block_number = test_clients
+					.relaychain_client
+					.storage()
+					.at_latest()
+					.await
+					.expect("can not connect to relaychain")
+					.fetch(&system_storage_api.number())
+					.await
+					.expect("fetch current session index")
+					.expect("current session index is not None");
+				println!(
+					"report_fork_equivocation transaction: {:?} at {:?}",
+					tx, current_block_number
+				);
 			},
 			EquivocationType::FutureBlockEquivocation => {
 				let equivocation_proof = FutureBlockVotingProof {

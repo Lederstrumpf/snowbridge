@@ -76,6 +76,7 @@ func (li *BeefyListener) subscribeNewBEEFYEvents(ctx context.Context) error {
 		case err := <-sub.Err():
 			return fmt.Errorf("header subscription: %w", err)
 		case gethheader := <-headers:
+			// TODO FOLLOWUP PR
 			// TODO: for slashing, we may want to
 			// 1. scan older blocks as well if the latest BEEFY commitment stored on Ethereum doesn't match the commitment at that block # on the relay chain
 			// 2. potentially scan older blocks even if latest BEEFY commitment is sound (honest relayers may have saved the day, but the adversaries should still be slashed)
@@ -126,6 +127,7 @@ func (li *BeefyListener) subscribeNewBEEFYEvents(ctx context.Context) error {
 					if err != nil {
 						log.WithError(err).Warning("Failed to decode transaction call data")
 					}
+					// TODO NOW? isn't already handled by future block equivocation handling?
 					// TODO: handle tickets submitted for future blocks
 					latestHash, latestBlock, err := li.getLatestBlockInfo()
 					if err != nil {
@@ -134,6 +136,7 @@ func (li *BeefyListener) subscribeNewBEEFYEvents(ctx context.Context) error {
 					latestBlockNumber := uint64(latestBlock.Block.Header.Number)
 
 					if event.BlockNumber > uint64(latestBlockNumber) {
+						// Future block equivocation handling
 						validatorProof, err := li.parseSubmitInitialProof(callData)
 						if err != nil {
 							log.WithError(err).Warning("Failed to decode transaction call data")
